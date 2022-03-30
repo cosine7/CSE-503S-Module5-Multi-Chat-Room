@@ -1,0 +1,79 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+.nickname-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .25);
+    border-radius: 15px;
+    width: 400px;
+    height: 170px;
+    box-sizing: border-box;
+    padding: 30px;
+}
+
+.nickname-wrapper input {
+    border: none;
+    border-bottom: 2px solid gray;
+    font-size: 18px;
+    outline: none;
+    padding-bottom: 3px;
+}
+
+.nickname-wrapper label {
+    transform: translateY(-25px);
+    color: gray;
+    pointer-events: none;
+    transition: all 0.3s;
+}
+
+.nickname-wrapper input:focus {
+    border-color: #558AE8;
+}
+
+.nickname-wrapper input:focus + label,
+.nickname-wrapper input:valid + label {
+    transform: translateY(-50px);
+    color: #558AE8;
+}
+
+.nickname-wrapper button {
+    position: relative;
+    margin-top: 10px;
+    height: 35px;
+    border: none;
+    font-size: 18px;
+    background-color: #558AE8;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: white;
+}
+
+.nickname-wrapper button:hover {
+    box-shadow: 0 0 30px rgba(0, 0, 0, .15);
+}
+
+.nickname-wrapper i {
+    position: absolute;
+    transition: all 0.3s;
+    right: 100px;
+}
+
+.nickname-wrapper button:hover > i {
+    right: 90px;
+}
