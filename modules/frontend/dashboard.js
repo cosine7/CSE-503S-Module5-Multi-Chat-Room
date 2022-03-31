@@ -11,6 +11,8 @@ export default function loadDashboard(id, nickname) {
   const profile = document.createElement('div');
   profile.className = 'profile';
   const avatar = document.createElement('div');
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+  avatar.style.backgroundColor = `#${randomColor}`;
   profile.append(avatar, nickname);
   const roomText = document.createElement('p');
   roomText.textContent = 'Room';
