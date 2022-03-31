@@ -1,11 +1,12 @@
 @font-face {
   font-family: "iconfont";
-  src: url('iconfont.ttf?t=1648763247813') format('truetype');
+  src: url('iconfont.ttf?t=1648764901216') format('truetype');
 }
 
 .iconfont {
   font-family: "iconfont" !important;
   font-size: 16px;
+  font-style: normal;
 }
 
 .icon-plus:before {
@@ -13,3 +14,6 @@
   font-size: 30px;
 }
 
+.icon-close:before {
+  content: "\e6e9";
+}
