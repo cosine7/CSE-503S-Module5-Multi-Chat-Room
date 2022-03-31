@@ -4,6 +4,9 @@ export default function loadLobby(id, nickname) {
   user.id = id;
   user.nickname = nickname;
   const sidebar = document.createElement('aside');
+  const createRoomButton = document.createElement('button');
+  createRoomButton.className = 'iconfont icon-plus';
+  sidebar.append(createRoomButton);
   const nav = document.createElement('nav');
   const main = document.createElement('main');
   const youText = document.createElement('p');

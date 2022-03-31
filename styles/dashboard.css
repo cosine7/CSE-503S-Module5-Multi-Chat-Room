@@ -5,6 +5,10 @@
 aside {
     width: 70px;
     background-color: rgb(40, 40, 40);
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 nav {
@@ -16,6 +20,19 @@ nav {
 
 main {
     flex-grow: 1;
+}
+
+aside button {
+    background-color: transparent;
+    border: none;
+    color: gray;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+aside button:hover {
+    color: white;
+    text-shadow: 0 0 3px white;
 }
 
 nav > p {
