@@ -8,7 +8,7 @@ html, body {
     width: 100%;
 }
 
-.nickname-wrapper {
+#nickname-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -26,7 +26,7 @@ html, body {
     padding: 30px;
 }
 
-.nickname-wrapper input {
+#nickname-wrapper input {
     border: none;
     border-bottom: 2px solid gray;
     font-size: 18px;
@@ -34,24 +34,24 @@ html, body {
     padding-bottom: 3px;
 }
 
-.nickname-wrapper label {
+#nickname-wrapper label {
     transform: translateY(-25px);
     color: gray;
     pointer-events: none;
     transition: all 0.3s;
 }
 
-.nickname-wrapper input:focus {
+#nickname-wrapper input:focus {
     border-color: #558AE8;
 }
 
-.nickname-wrapper input:focus + label,
-.nickname-wrapper input:valid + label {
+#nickname-wrapper input:focus + label,
+#nickname-wrapper input:valid + label {
     transform: translateY(-50px);
     color: #558AE8;
 }
 
-.nickname-wrapper button {
+#nickname-wrapper button {
     position: relative;
     margin-top: 10px;
     height: 35px;
@@ -64,16 +64,16 @@ html, body {
     color: white;
 }
 
-.nickname-wrapper button:hover {
+#nickname-wrapper button:hover {
     box-shadow: 0 0 30px rgba(0, 0, 0, .15);
 }
 
-.nickname-wrapper i {
+#nickname-wrapper i {
     position: absolute;
     transition: all 0.3s;
     right: 100px;
 }
 
-.nickname-wrapper button:hover > i {
+#nickname-wrapper button:hover > i {
     right: 90px;
 }
