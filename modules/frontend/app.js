@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-unresolved
 import { io } from 'https://cdn.socket.io/4.3.2/socket.io.esm.min.js';
-import loadDashboard from './dashboard.js';
+import loadLobby from './lobby.js';
 
 const socket = io();
 const form = document.getElementById('nickname-wrapper');
@@ -17,6 +17,6 @@ form.addEventListener('submit', (event) => {
 
   socket.on('userAdded', (user) => {
     form.remove();
-    loadDashboard(user.id, user.nickname);
+    loadLobby(user.id, user.nickname);
   });
 });

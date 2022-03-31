@@ -1,6 +1,6 @@
 const user = {};
 
-export default function loadDashboard(id, nickname) {
+export default function loadLobby(id, nickname) {
   user.id = id;
   user.nickname = nickname;
   const sidebar = document.createElement('aside');
