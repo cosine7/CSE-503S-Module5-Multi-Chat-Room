@@ -15,8 +15,8 @@ form.addEventListener('submit', (event) => {
   isEmitting = true;
   socket.emit('newUser', nickname.value);
 
-  socket.on('userAdded', () => {
+  socket.on('userAdded', (user) => {
     form.remove();
-    loadDashboard(nickname.value);
+    loadDashboard(user.id, user.nickname);
   });
 });

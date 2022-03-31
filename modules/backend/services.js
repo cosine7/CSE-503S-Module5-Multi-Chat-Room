@@ -1,11 +1,13 @@
 const users = [];
+let ids = 0;
 
 export default function startService(socket) {
   socket.on('newUser', (nickname) => {
-    users.push({
-      id: users.length,
+    const user = {
+      id: ids++,
       nickname,
-    });
-    socket.emit('userAdded');
+    };
+    users.push(user);
+    socket.emit('userAdded', user);
   });
 }
