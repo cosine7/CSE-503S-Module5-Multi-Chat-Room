@@ -22,6 +22,17 @@ main {
     flex-grow: 1;
 }
 
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vbox {
+    display: flex;
+    flex-direction: column;
+}
+
 aside button {
     background-color: transparent;
     border: none;
@@ -59,6 +70,10 @@ nav > div > div {
     border: 1px solid #8C8C92;
 }
 
+nav .room {
+    cursor: pointer;
+}
+
 #popover {
     position: absolute;
     z-index: 99;
@@ -82,4 +97,29 @@ nav > div > div {
 
 #popover i:hover {
     color: black;
+}
+
+main .btn-join {
+    border: none;
+    border-radius: 15px;
+    padding: 20px 40px;
+    font-size: 20px;
+    background-color: #558AE8;
+    cursor: pointer;
+    color: white;
+    transition: all 0.2s;
+}
+
+main .btn-join:hover {
+    box-shadow: 0 0 30px rgba(0, 0, 0, .15);
+}
+
+main .chat-box {
+    flex-grow: 1;
+    background-color: red;
+}
+
+main .input-box {
+    background-color: aqua;
+    height: 100px;
 }

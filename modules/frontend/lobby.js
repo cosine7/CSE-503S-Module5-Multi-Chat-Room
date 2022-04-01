@@ -1,5 +1,8 @@
 export default function loadLobby(user, rooms, socket) {
   const nav = document.createElement('nav');
+  const main = document.createElement('main');
+  const chatBoxes = new Map();
+  let activeRoomDiv = null;
 
   function closePopover() {
     document.getElementById('popover').remove();
@@ -44,8 +47,48 @@ export default function loadLobby(user, rooms, socket) {
     element.style.backgroundColor = `#${randomColor}`;
   }
 
-  function createSection(name) {
+  function showChatBox(roomId) {
+    main.innerHTML = '';
+    main.className = 'vbox';
+    chatBoxes.get(roomId).forEach((element) => {
+      main.appendChild(element);
+    });
+  }
+
+  function joinRoom(roomId) {
+    socket.emit('joinRoom', roomId);
+  }
+
+  function roomDidClick(event) {
+    event.preventDefault();
+    if (activeRoomDiv === this) {
+      return;
+    }
+    activeRoomDiv = this;
+    const roomId = this.room.id;
+    socket.emit('roomClicked', roomId);
+    socket.on('isInRoom', (isInRoom) => {
+      if (isInRoom) {
+        showChatBox(roomId);
+      } else {
+        const button = document.createElement('button');
+        button.className = 'btn-join';
+        button.textContent = `Join Room ${this.textContent}`;
+        button.addEventListener('click', joinRoom.bind(null, roomId));
+        main.innerHTML = '';
+        main.className = 'flex-center';
+        main.appendChild(button);
+      }
+    });
+  }
+
+  function createSection(name, room) {
     const section = document.createElement('div');
+    if (room) {
+      section.room = room;
+      section.className = 'room';
+      section.addEventListener('click', roomDidClick, true);
+    }
     const avatar = document.createElement('div');
     generateColorFor(avatar);
     section.append(avatar, name);
@@ -53,7 +96,17 @@ export default function loadLobby(user, rooms, socket) {
   }
 
   function addRoomSection(room) {
-    nav.appendChild(createSection(room.name));
+    nav.appendChild(createSection(room.name, room));
+    if (room.owner.id !== user.id) {
+      return;
+    }
+    const chatBox = document.createElement('div');
+    chatBox.className = 'chat-box';
+    const inputBox = document.createElement('div');
+    inputBox.className = 'input-box';
+    chatBox.append(room.name);
+    chatBoxes.set(room.id, [chatBox, inputBox]);
+    showChatBox(room.id);
   }
 
   socket.on('newRoom', addRoomSection);
@@ -64,7 +117,6 @@ export default function loadLobby(user, rooms, socket) {
     createRoomButton.className = 'iconfont icon-plus';
     createRoomButton.addEventListener('click', createRoomButtonDidClick);
     sidebar.append(createRoomButton);
-    const main = document.createElement('main');
     const youText = document.createElement('p');
     youText.textContent = 'You';
     const roomText = document.createElement('p');

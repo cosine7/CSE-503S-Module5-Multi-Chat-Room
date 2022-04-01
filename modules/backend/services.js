@@ -22,10 +22,22 @@ export default function startService(socket, io) {
     io.emit('newRoom', room);
   });
 
-  // io.of('/').adapter.on('create-room', (room) => {
-  //   if (!room.startsWith('room')) {
-  //     return;
-  //   }
-  //   console.log(`room created${room}`);
-  // });
+  socket.on('roomClicked', (roomId) => {
+    const sockets = io.of('/').adapter.rooms.get(roomId);
+    socket.emit('isInRoom', sockets && sockets.has(socket.id));
+  });
+
+  socket.on('joinRoom', (roomId) => {
+    socket.join(roomId);
+    socket.emit('joinRoomComplete');
+  });
+}
+
+export function startGlobalService(io) {
+  io.of('/').adapter.on('create-room', (room) => {
+    if (!room.startsWith('room')) {
+      return;
+    }
+    console.log(`room created${room}`);
+  });
 }
