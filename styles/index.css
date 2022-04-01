@@ -6,6 +6,9 @@
 html, body {
     height: 100%;
     width: 100%;
+    overflow: auto;
+    min-height: 700px;
+    min-width: 700px;
 }
 
 .form-wrapper {

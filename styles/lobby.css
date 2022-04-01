@@ -4,18 +4,22 @@
 
 aside {
     width: 70px;
+    height: 100%;
     background-color: rgb(40, 40, 40);
     padding-top: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-sizing: border-box;
 }
 
 nav {
-    width: 300px;
+    width: 320px;
     padding: 20px;
     overflow: auto;
     background-color: #F2F2F7;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 main {
@@ -26,11 +30,6 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.vbox {
-    display: flex;
-    flex-direction: column;
 }
 
 aside button {
@@ -114,12 +113,57 @@ main .btn-join:hover {
     box-shadow: 0 0 30px rgba(0, 0, 0, .15);
 }
 
-main .chat-box {
-    flex-grow: 1;
-    background-color: red;
+.grid {
+    display: grid;
+    grid-template-areas:
+        "chat-box chat-box chat-box chat-box member-list"
+        "chat-box chat-box chat-box chat-box member-list"
+        "chat-box chat-box chat-box chat-box member-list"
+        "input-box input-box input-box input-box input-box";
+}
+
+.chat-box {
+    grid-area: chat-box;
+    padding: 20px;
+    overflow: auto;
+}
+
+.chat-box .message {
+    text-align: center;
+    color: gray;
+}
+
+.member-list {
+    /* background-color: #558AE8; */
+    border-left: 1px solid gray;
+    grid-area: member-list;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+.member-list > p {
+    font-size: 16px;
+    color: gray;
+}
+
+.member-list li {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.member-list li div {
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+    border: 1px solid gray;
+    border-radius: 50%;
+    margin-right: 20px;
 }
 
 main .input-box {
     background-color: aqua;
-    height: 100px;
+    grid-area: input-box;
 }

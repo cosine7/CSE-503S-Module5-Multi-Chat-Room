@@ -42,14 +42,9 @@ export default function loadLobby(user, rooms, socket) {
     document.body.appendChild(popover);
   }
 
-  function generateColorFor(element) {
-    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-    element.style.backgroundColor = `#${randomColor}`;
-  }
-
   function showChatBox(roomId) {
     main.innerHTML = '';
-    main.className = 'vbox';
+    main.className = 'grid';
     chatBoxes.get(roomId).forEach((element) => {
       main.appendChild(element);
     });
@@ -84,29 +79,52 @@ export default function loadLobby(user, rooms, socket) {
 
   function createSection(name, room) {
     const section = document.createElement('div');
+    const avatar = document.createElement('div');
     if (room) {
       section.room = room;
       section.className = 'room';
       section.addEventListener('click', roomDidClick, true);
+      avatar.style.backgroundColor = room.color;
+    } else {
+      avatar.style.backgroundColor = user.color;
     }
-    const avatar = document.createElement('div');
-    generateColorFor(avatar);
     section.append(avatar, name);
     return section;
   }
 
-  function addRoomSection(room) {
-    nav.appendChild(createSection(room.name, room));
-    if (room.owner.id !== user.id) {
-      return;
-    }
+  function createMemberRow(member) {
+    const avatar = document.createElement('div');
+    avatar.style.backgroundColor = member.color;
+    const li = document.createElement('li');
+    li.append(avatar, member.nickname);
+    return li;
+  }
+
+  function createChatBox(room) {
     const chatBox = document.createElement('div');
     chatBox.className = 'chat-box';
+    const ownerText = document.createElement('p');
+    ownerText.textContent = 'Owner';
+    const memberText = document.createElement('p');
+    memberText.textContent = 'Member';
+    const memberList = document.createElement('ul');
+    memberList.className = 'member-list';
+    memberList.appendChild(ownerText);
+    memberList.appendChild(createMemberRow(room.owner));
+    memberList.appendChild(memberText);
     const inputBox = document.createElement('div');
     inputBox.className = 'input-box';
-    chatBox.append(room.name);
-    chatBoxes.set(room.id, [chatBox, inputBox]);
+    const message = document.createElement('p');
+    message.className = 'message';
+    message.textContent = 'You Created the Room';
+    chatBox.appendChild(message);
+    chatBoxes.set(room.id, [chatBox, memberList, inputBox]);
     showChatBox(room.id);
+  }
+
+  function addRoomSection(room) {
+    nav.appendChild(createSection(room.name, room));
+    room.owner.id === user.id && createChatBox(room);
   }
 
   socket.on('newRoom', addRoomSection);

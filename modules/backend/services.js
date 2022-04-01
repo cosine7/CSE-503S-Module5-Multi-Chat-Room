@@ -1,11 +1,16 @@
 const users = [];
 const rooms = [];
 
+function getRandomColor() {
+  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+}
+
 export default function startService(socket, io) {
   socket.on('newUser', (nickname) => {
     const user = {
       id: socket.id,
       nickname,
+      color: getRandomColor(),
     };
     users.push(user);
     socket.emit('userAdded', user, rooms);
@@ -16,6 +21,7 @@ export default function startService(socket, io) {
       id: `room${Date.now().toString()}`,
       name: roomName,
       owner,
+      color: getRandomColor(),
     };
     socket.join(room.id);
     rooms.push(room);
