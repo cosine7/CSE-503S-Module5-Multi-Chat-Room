@@ -2,7 +2,6 @@ export default function loadLobby(user, rooms, socket) {
   const nav = document.createElement('nav');
   const main = document.createElement('main');
   const chatBoxes = new Map();
-  let activeRoomDiv = null;
 
   function closePopover() {
     document.getElementById('popover').remove();
@@ -50,45 +49,45 @@ export default function loadLobby(user, rooms, socket) {
     });
   }
 
-  function joinRoom(roomId) {
-    socket.emit('joinRoom', roomId);
-  }
-
-  function roomDidClick(event) {
-    event.preventDefault();
-    if (activeRoomDiv === this) {
-      return;
-    }
-    activeRoomDiv = this;
-    const roomId = this.room.id;
-    socket.emit('roomClicked', roomId);
-    socket.on('isInRoom', (isInRoom) => {
-      if (isInRoom) {
-        showChatBox(roomId);
-      } else {
-        const button = document.createElement('button');
-        button.className = 'btn-join';
-        button.textContent = `Join Room ${this.textContent}`;
-        button.addEventListener('click', joinRoom.bind(null, roomId));
-        main.innerHTML = '';
-        main.className = 'flex-center';
-        main.appendChild(button);
-      }
+  function joinRoom(room) {
+    socket.emit('joinRoom', room.id);
+    socket.on('roomJoined', () => {
+      createChatBox(room);
+      showChatBox(room.id);
+      addAnnouncement(room.id, 'You joined the room');
     });
   }
+
+  function roomDidClick(room) {
+    socket.emit('roomClicked', room.id);
+  }
+
+  socket.on('isInRoom', (isInRoom, room) => {
+    if (isInRoom) {
+      showChatBox(room.id);
+    } else {
+      const button = document.createElement('button');
+      button.className = 'btn-join';
+      button.textContent = `Join Room ${room.name}`;
+      button.addEventListener('click', joinRoom.bind(null, room));
+      main.innerHTML = '';
+      main.className = 'flex-center';
+      main.appendChild(button);
+    }
+  });
 
   function createSection(name, room) {
     const section = document.createElement('div');
     const avatar = document.createElement('div');
     if (room) {
-      section.room = room;
       section.className = 'room';
-      section.addEventListener('click', roomDidClick, true);
+      section.addEventListener('click', roomDidClick.bind(null, room));
       avatar.style.backgroundColor = room.color;
+      section.append(avatar, room.id);
     } else {
       avatar.style.backgroundColor = user.color;
+      section.append(avatar, name);
     }
-    section.append(avatar, name);
     return section;
   }
 
@@ -114,20 +113,33 @@ export default function loadLobby(user, rooms, socket) {
     memberList.appendChild(memberText);
     const inputBox = document.createElement('div');
     inputBox.className = 'input-box';
-    const message = document.createElement('p');
-    message.className = 'message';
-    message.textContent = 'You Created the Room';
-    chatBox.appendChild(message);
     chatBoxes.set(room.id, [chatBox, memberList, inputBox]);
-    showChatBox(room.id);
+  }
+
+  function addAnnouncement(roomId, announcement) {
+    const message = document.createElement('p');
+    message.className = 'announcement';
+    message.textContent = announcement;
+    chatBoxes.get(roomId)[0].appendChild(message);
   }
 
   function addRoomSection(room) {
     nav.appendChild(createSection(room.name, room));
-    room.owner.id === user.id && createChatBox(room);
+    if (room.owner.id === user.id) {
+      createChatBox(room);
+      showChatBox(room.id);
+      addAnnouncement(room.id, 'You created the room');
+    }
   }
 
   socket.on('newRoom', addRoomSection);
+
+  socket.on('newMember', (roomId, memberId, memberNickname) => {
+    if (memberId === user.id) {
+      return;
+    }
+    addAnnouncement(roomId, `${memberNickname} joined the room`);
+  });
 
   (async () => {
     const sidebar = document.createElement('aside');

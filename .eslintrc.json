@@ -16,6 +16,7 @@
         "no-plusplus": "off",
         "import/no-unresolved": "off",
         "no-param-reassign": "off",
-        "no-unused-expressions": "off"
+        "no-unused-expressions": "off",
+        "no-use-before-define": "off"
     }
 }

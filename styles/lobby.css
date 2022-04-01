@@ -128,7 +128,7 @@ main .btn-join:hover {
     overflow: auto;
 }
 
-.chat-box .message {
+.chat-box .announcement {
     text-align: center;
     color: gray;
 }
@@ -140,6 +140,7 @@ main .btn-join:hover {
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+    width: max-content;
 }
 
 .member-list > p {
@@ -152,6 +153,7 @@ main .btn-join:hover {
     display: flex;
     align-items: center;
     margin: 20px 0;
+    width: 100px;
 }
 
 .member-list li div {
