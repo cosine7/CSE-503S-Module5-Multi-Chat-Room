@@ -1,10 +1,6 @@
 export default function loadLobby(user, socket) {
   const nav = document.createElement('nav');
 
-  socket.on('newRoom', (room) => {
-    nav.append(room.id);
-  });
-
   function closePopover() {
     document.getElementById('popover').remove();
   }
@@ -48,6 +44,18 @@ export default function loadLobby(user, socket) {
     element.style.backgroundColor = `#${randomColor}`;
   }
 
+  function createSection(name) {
+    const section = document.createElement('div');
+    const avatar = document.createElement('div');
+    generateColorFor(avatar);
+    section.append(avatar, name);
+    return section;
+  }
+
+  socket.on('newRoom', (room) => {
+    nav.appendChild(createSection(room.name));
+  });
+
   (async () => {
     const sidebar = document.createElement('aside');
     const createRoomButton = document.createElement('button');
@@ -57,14 +65,9 @@ export default function loadLobby(user, socket) {
     const main = document.createElement('main');
     const youText = document.createElement('p');
     youText.textContent = 'You';
-    const profile = document.createElement('div');
-    profile.className = 'profile';
-    const avatar = document.createElement('div');
-    generateColorFor(avatar);
-    profile.append(avatar, user.nickname);
     const roomText = document.createElement('p');
     roomText.textContent = 'Room';
-    nav.append(youText, profile, roomText);
+    nav.append(youText, createSection(user.nickname), roomText);
     document.body.className = 'container';
     document.body.append(sidebar, nav, main);
   })();
