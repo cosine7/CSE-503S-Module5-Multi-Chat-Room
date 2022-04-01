@@ -131,6 +131,7 @@ main .btn-join:hover {
 .chat-box .announcement {
     text-align: center;
     color: gray;
+    margin: 10px 0;
 }
 
 .member-list {

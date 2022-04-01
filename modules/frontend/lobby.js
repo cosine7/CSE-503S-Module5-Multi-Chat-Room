@@ -55,11 +55,8 @@ export default function loadLobby(user, rooms, socket) {
       createChatBox(room);
       showChatBox(room.id);
       addAnnouncement(room.id, 'You joined the room');
+      addMemberToList(room.id, user);
     });
-  }
-
-  function roomDidClick(room) {
-    socket.emit('roomClicked', room.id);
   }
 
   socket.on('isInRoom', (isInRoom, room) => {
@@ -81,13 +78,14 @@ export default function loadLobby(user, rooms, socket) {
     const avatar = document.createElement('div');
     if (room) {
       section.className = 'room';
-      section.addEventListener('click', roomDidClick.bind(null, room));
+      section.addEventListener('click', () => {
+        socket.emit('roomClicked', room.id);
+      });
       avatar.style.backgroundColor = room.color;
-      section.append(avatar, room.id);
     } else {
       avatar.style.backgroundColor = user.color;
-      section.append(avatar, name);
     }
+    section.append(avatar, name);
     return section;
   }
 
@@ -132,13 +130,18 @@ export default function loadLobby(user, rooms, socket) {
     }
   }
 
+  function addMemberToList(roomId, member) {
+    chatBoxes.get(roomId)[1].appendChild(createMemberRow(member));
+  }
+
   socket.on('newRoom', addRoomSection);
 
-  socket.on('newMember', (roomId, memberId, memberNickname) => {
-    if (memberId === user.id) {
+  socket.on('newMember', (roomId, member) => {
+    if (member.id === user.id) {
       return;
     }
-    addAnnouncement(roomId, `${memberNickname} joined the room`);
+    addAnnouncement(roomId, `${member.nickname} joined the room`);
+    addMemberToList(roomId, member);
   });
 
   (async () => {

@@ -44,6 +44,6 @@ export function startGlobalService(io) {
     if (!roomId.startsWith('room')) {
       return;
     }
-    io.to(roomId).emit('newMember', roomId, memberId, users.get(memberId).nickname);
+    io.to(roomId).emit('newMember', roomId, users.get(memberId));
   });
 }
