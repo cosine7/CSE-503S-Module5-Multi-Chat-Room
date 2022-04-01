@@ -1,4 +1,4 @@
-export default function loadLobby(user, socket) {
+export default function loadLobby(user, rooms, socket) {
   const nav = document.createElement('nav');
 
   function closePopover() {
@@ -52,9 +52,11 @@ export default function loadLobby(user, socket) {
     return section;
   }
 
-  socket.on('newRoom', (room) => {
+  function addRoomSection(room) {
     nav.appendChild(createSection(room.name));
-  });
+  }
+
+  socket.on('newRoom', addRoomSection);
 
   (async () => {
     const sidebar = document.createElement('aside');
@@ -68,6 +70,7 @@ export default function loadLobby(user, socket) {
     const roomText = document.createElement('p');
     roomText.textContent = 'Room';
     nav.append(youText, createSection(user.nickname), roomText);
+    rooms.forEach(addRoomSection);
     document.body.className = 'container';
     document.body.append(sidebar, nav, main);
   })();

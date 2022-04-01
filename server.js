@@ -11,6 +11,6 @@ app.use(express.static(resolve(resolve(), 'modules/frontend')));
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-io.on('connection', startService);
+io.on('connection', (socket) => startService(socket, io));
 
 httpServer.listen(8080);
