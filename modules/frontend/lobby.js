@@ -85,7 +85,9 @@ export default function loadLobby(user, rooms, socket) {
     } else {
       avatar.style.backgroundColor = user.color;
     }
-    section.append(avatar, name);
+    const nameText = document.createElement('p');
+    nameText.textContent = name;
+    section.append(avatar, nameText);
     return section;
   }
 
