@@ -1,12 +1,10 @@
-const users = [];
-const rooms = [];
-let userIds = 0;
-let roomIds = 0;
-
 export default function startService(socket) {
+  const users = [];
+  const rooms = [];
+
   socket.on('newUser', (nickname) => {
     const user = {
-      id: userIds++,
+      id: socket.id,
       nickname,
     };
     users.push(user);
@@ -15,7 +13,7 @@ export default function startService(socket) {
 
   socket.on('createRoom', (owner, roomName) => {
     const room = {
-      id: roomIds++,
+      id: Date.now().toString(),
       name: roomName,
       owner,
     };

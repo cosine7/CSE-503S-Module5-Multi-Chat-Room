@@ -16,6 +16,6 @@ form.addEventListener('submit', (event) => {
 
   socket.on('userAdded', (user) => {
     form.remove();
-    loadLobby(user.id, user.nickname);
+    loadLobby(user, socket);
   });
 });
