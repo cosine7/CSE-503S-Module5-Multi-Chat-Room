@@ -2,6 +2,7 @@ export default function loadLobby(user, rooms, socket) {
   const nav = document.createElement('nav');
   const main = document.createElement('main');
   const chatBoxes = new Map();
+  let currentActiveRoomSection = null;
 
   function closePopover() {
     document.getElementById('popover').remove();
@@ -78,8 +79,19 @@ export default function loadLobby(user, rooms, socket) {
     const avatar = document.createElement('div');
     if (room) {
       section.className = 'room';
+      if (room.owner.id === user.id) {
+        section.classList.add('room-active');
+        currentActiveRoomSection && currentActiveRoomSection.classList.toggle('room-active');
+        currentActiveRoomSection = section;
+      }
       section.addEventListener('click', () => {
+        if (currentActiveRoomSection === section) {
+          return;
+        }
         socket.emit('roomClicked', room.id);
+        currentActiveRoomSection && currentActiveRoomSection.classList.toggle('room-active');
+        section.classList.toggle('room-active');
+        currentActiveRoomSection = section;
       });
       avatar.style.backgroundColor = room.color;
     } else {
