@@ -72,7 +72,8 @@ nav > div > div {
     border: 1px solid #8C8C92;
 }
 
-nav > div > p {
+nav > div > p,
+.member-list > li > p {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -144,6 +145,8 @@ main .btn-join:hover {
         "chat-box chat-box chat-box chat-box member-list"
         "chat-box chat-box chat-box chat-box member-list"
         "input-box input-box input-box input-box input-box";
+    grid-template-columns: repeat(4, minmax(0, 1fr)) 300px;
+    grid-template-rows: repeat(3, minmax(0, 1fr)) 200px;
 }
 
 .chat-box {
@@ -159,7 +162,6 @@ main .btn-join:hover {
 }
 
 .member-list {
-    /* background-color: #558AE8; */
     border-left: 1px solid gray;
     grid-area: member-list;
     padding: 20px;
@@ -177,7 +179,7 @@ main .btn-join:hover {
     display: flex;
     align-items: center;
     margin: 20px 0;
-    width: 100px;
+    box-sizing: border-box;
 }
 
 .member-list li div {

@@ -106,8 +106,10 @@ export default function loadLobby(user, rooms, socket) {
   function createMemberRow(member) {
     const avatar = document.createElement('div');
     avatar.style.backgroundColor = member.color;
+    const name = document.createElement('p');
+    name.textContent = member.nickname;
     const li = document.createElement('li');
-    li.append(avatar, member.nickname);
+    li.append(avatar, name);
     return li;
   }
 
