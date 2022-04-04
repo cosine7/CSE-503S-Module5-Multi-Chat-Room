@@ -122,11 +122,22 @@ export default function loadLobby(user, rooms, socket) {
     memberText.textContent = 'Member';
     const memberList = document.createElement('ul');
     memberList.className = 'member-list';
-    memberList.appendChild(ownerText);
-    memberList.appendChild(createMemberRow(room.owner));
-    memberList.appendChild(memberText);
-    const inputBox = document.createElement('div');
+    memberList.append(ownerText, createMemberRow(room.owner), memberText);
+    const toolbar = document.createElement('div');
+    toolbar.className = 'tool-bar';
+    toolbar.append('this is a tool bar');
+    const textarea = document.createElement('textarea');
+    textarea.required = true;
+    const button = document.createElement('button');
+    button.textContent = 'Send';
+    const inputBox = document.createElement('form');
     inputBox.className = 'input-box';
+    inputBox.append(toolbar, textarea, button);
+    inputBox.addEventListener('submit', (event) => {
+      event.preventDefault();
+      socket.emit('newMessageTo', room.id, textarea.value);
+      textarea.value = '';
+    });
     chatBoxes.set(room.id, [chatBox, memberList, inputBox]);
   }
 
@@ -158,6 +169,17 @@ export default function loadLobby(user, rooms, socket) {
     }
     addAnnouncement(roomId, `${member.nickname} joined the room`);
     addMemberToList(roomId, member);
+  });
+
+  socket.on('newMessageFrom', (roomId, message, member) => {
+    const avatar = document.createElement('div');
+    avatar.style.backgroundColor = member.color;
+    const text = document.createElement('p');
+    text.textContent = message;
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = `message-wrapper message-${member.id === user.id ? 'right' : 'left'}`;
+    messageWrapper.append(avatar, text);
+    chatBoxes.get(roomId)[0].appendChild(messageWrapper);
   });
 
   (async () => {

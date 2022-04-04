@@ -37,6 +37,10 @@ export default function startService(socket, io) {
     socket.join(roomId);
     socket.emit('roomJoined');
   });
+
+  socket.on('newMessageTo', (roomId, message) => {
+    io.to(roomId).emit('newMessageFrom', roomId, message, users.get(socket.id));
+  });
 }
 
 export function startGlobalService(io) {

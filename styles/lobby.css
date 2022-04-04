@@ -193,6 +193,67 @@ main .btn-join:hover {
 }
 
 main .input-box {
-    background-color: aqua;
     grid-area: input-box;
+    box-sizing: border-box;
+    border-top: 1px solid gray;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-box textarea {
+    resize: none;
+    height: 100%;
+    outline: none;
+    border: 1px solid gray;
+    border-radius: 15px;
+    box-sizing: border-box;
+    padding: 20px;
+    margin: 10px 0;
+}
+
+.input-box button {
+    margin: 0 0 0 auto;
+    border: none;
+    color: white;
+    background-color: #558AE8;
+    flex: none;
+    cursor: pointer;
+    width: 80px;
+    height: 25px;
+    border-radius: 15px;
+}
+
+.message-wrapper {
+    margin: 10px 0;
+    display: flex;
+}
+
+.message-right {
+    flex-direction: row-reverse;
+}
+
+.message-wrapper div{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid gray;
+}
+
+.message-wrapper p {
+    max-width: 200px;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 0 10px;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.message-left p {
+    background-color: #E9E9EB;
+}
+
+.message-right p {
+    background-color: #0A84FF;
+    color: white;
 }
