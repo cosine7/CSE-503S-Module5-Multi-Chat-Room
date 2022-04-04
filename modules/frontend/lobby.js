@@ -97,13 +97,45 @@ export default function loadLobby(user, rooms, socket) {
     return section;
   }
 
-  function createMemberRow(member) {
+  function toggleMenu(menu) {
+    menu.classList.toggle('hidden');
+    menu.classList.toggle('visible');
+  }
+
+  function createMemberRow(ownerId, roomId, member) {
     const avatar = document.createElement('div');
     avatar.style.backgroundColor = member.color;
+    avatar.className = 'avatar';
     const name = document.createElement('p');
     name.textContent = member.nickname;
     const li = document.createElement('li');
     li.append(avatar, name);
+    li.memberId = member.id;
+    if (ownerId !== user.id || member.id === ownerId) {
+      return li;
+    }
+    const option = document.createElement('i');
+    option.className = 'iconfont icon-dots option';
+    const menu = document.createElement('div');
+    menu.className = 'option-menu hidden';
+    const kickOut = document.createElement('button');
+    kickOut.textContent = 'Kick Out';
+    const block = document.createElement('button');
+    block.textContent = 'Block';
+    menu.append(kickOut, block);
+    option.addEventListener('click', () => toggleMenu(menu));
+    kickOut.addEventListener('click', () => {
+      toggleMenu(menu);
+      if (!window.confirm('Are you sure you want to kick out this member?')) {
+        return;
+      }
+      socket.emit('kickOut', roomId, member);
+    });
+    block.addEventListener('click', () => {
+      toggleMenu(menu);
+      socket.emit('block', roomId, member);
+    });
+    li.append(option, menu);
     return li;
   }
 
@@ -145,22 +177,16 @@ export default function loadLobby(user, rooms, socket) {
     return option;
   }
 
-  function createChatBox(roomId) {
-    const chatBox = document.createElement('div');
-    chatBox.className = 'chat-box';
+  function loadMemberListAndSelection(select, memberList, roomId) {
+    select.innerHTML = '';
+    memberList.innerHTML = '';
     const room = joinedRooms.get(roomId);
-    room.messages.forEach((message) => {
-      showMessage(chatBox, message);
-    });
     const ownerText = document.createElement('p');
     ownerText.textContent = 'Owner';
     const memberText = document.createElement('p');
     memberText.textContent = 'Member';
-    const memberList = document.createElement('ul');
     memberList.className = 'member-list';
-    memberList.append(ownerText, createMemberRow(room.owner), memberText);
-    const select = document.createElement('select');
-    select.id = 'options';
+    memberList.append(ownerText, createMemberRow(room.owner.id, roomId, room.owner), memberText);
     const everyoneOption = document.createElement('option');
     everyoneOption.textContent = 'Everyone';
     everyoneOption.value = roomId;
@@ -170,11 +196,24 @@ export default function loadLobby(user, rooms, socket) {
       select.appendChild(createOption(room.owner));
     }
     room.members.forEach((member) => {
-      memberList.appendChild(createMemberRow(member));
+      memberList.appendChild(createMemberRow(room.owner.id, roomId, member));
       if (member.id !== user.id) {
         select.appendChild(createOption(member));
       }
     });
+  }
+
+  function createChatBox(roomId) {
+    const chatBox = document.createElement('div');
+    chatBox.className = 'chat-box';
+    const room = joinedRooms.get(roomId);
+    room.messages.forEach((message) => {
+      showMessage(chatBox, message);
+    });
+    const memberList = document.createElement('ul');
+    const select = document.createElement('select');
+    select.id = 'options';
+    loadMemberListAndSelection(select, memberList, roomId);
     const toolbar = document.createElement('div');
     toolbar.className = 'tool-bar';
     const label = document.createElement('label');
@@ -239,7 +278,7 @@ export default function loadLobby(user, rooms, socket) {
     };
     room.messages.push(message);
     if (currentActiveRoomSection && currentActiveRoomSection.roomId === roomId) {
-      main.children[1].appendChild(createMemberRow(member));
+      main.children[1].appendChild(createMemberRow(room.owner.id, roomId, member));
       document.getElementById('options').appendChild(createOption(member));
       showMessage(main.firstChild, message);
     }
@@ -251,6 +290,29 @@ export default function loadLobby(user, rooms, socket) {
     if (currentActiveRoomSection && currentActiveRoomSection.roomId === roomId) {
       showMessage(main.firstChild, message);
     }
+  });
+
+  socket.on('removeMember', async (roomId, member) => {
+    const room = joinedRooms.get(roomId);
+    room.members = await room.members.filter((element) => element.id !== member.id);
+    if (currentActiveRoomSection && currentActiveRoomSection.roomId === roomId) {
+      loadMemberListAndSelection(
+        document.getElementById('options'),
+        main.children[1],
+        roomId,
+      );
+    }
+  });
+
+  socket.on('beenKickedOutFrom', (roomId) => {
+    const room = joinedRooms.get(roomId);
+    window.alert(`You have been kicked out from room ${room.name}`);
+    if (currentActiveRoomSection && currentActiveRoomSection.roomId === roomId) {
+      main.innerHTML = '';
+      currentActiveRoomSection.classList.toggle('room-active');
+      currentActiveRoomSection = null;
+    }
+    joinedRooms.delete(roomId);
   });
 
   (async () => {

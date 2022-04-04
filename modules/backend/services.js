@@ -33,8 +33,8 @@ export default function startService(socket, io) {
     socket.emit('isInRoom', sockets && sockets.has(socket.id), rooms.get(roomId));
   });
 
-  socket.on('joinRoom', (roomId) => {
-    socket.join(roomId);
+  socket.on('joinRoom', async (roomId) => {
+    await socket.join(roomId);
     const members = [];
     const room = rooms.get(roomId);
     io.of('/').adapter.rooms.get(roomId).forEach((memberId) => {
@@ -53,6 +53,17 @@ export default function startService(socket, io) {
       socket.emit('newMessageFrom', roomId, message);
     }
     io.to(receiver).emit('newMessageFrom', roomId, message);
+  });
+
+  socket.on('kickOut', async (roomId, member) => {
+    const memberSocket = (await io.in(member.id).fetchSockets())[0];
+    await memberSocket.leave(roomId);
+    io.to(roomId).emit('newMessageFrom', roomId, {
+      type: 'announcement',
+      data: `${member.nickname} has been kicked out by room owner`,
+    });
+    io.to(roomId).emit('removeMember', roomId, member);
+    io.to(member.id).emit('beenKickedOutFrom', roomId);
   });
 }
 

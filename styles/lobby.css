@@ -167,6 +167,7 @@ main .btn-join:hover {
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+    position: relative;
 }
 
 .member-list > p {
@@ -189,13 +190,14 @@ main .btn-join:hover {
     color: gray;
     cursor: pointer;
     transition: all 0.2s;
+    z-index: 99;
 }
 
 .option:hover {
     color: black;
 }
 
-.member-list li div {
+.member-list .avatar {
     flex: none;
     width: 30px;
     height: 30px;
@@ -279,6 +281,45 @@ main .input-box {
 }
 
 .message-right p {
+    background-color: #0A84FF;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: flex;
+}
+
+.option-menu {
+    border-radius: 5px;
+    border: 1px solid gray;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+    position: absolute;
+    right: 0;
+    top: 40px;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 999;
+}
+
+.option-menu button {
+    height: 30px;
+    width: 80px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding-left: 15px;
+    text-align: left;
+    line-height: 30px;
+    user-select: none;
+}
+
+.option-menu button:hover {
     background-color: #0A84FF;
     color: white;
 }
