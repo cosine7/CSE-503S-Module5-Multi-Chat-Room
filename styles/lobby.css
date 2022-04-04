@@ -180,6 +180,20 @@ main .btn-join:hover {
     align-items: center;
     margin: 20px 0;
     box-sizing: border-box;
+    position: relative;
+}
+
+.option {
+    content: "\e605";
+    position: absolute;
+    right: -5px;
+    color: gray;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option:hover {
+    color: black;
 }
 
 .member-list li div {
