@@ -35,11 +35,18 @@ export default function startService(socket, io) {
 
   socket.on('joinRoom', (roomId) => {
     socket.join(roomId);
-    socket.emit('roomJoined');
+    const members = [];
+    const room = rooms.get(roomId);
+    io.of('/').adapter.rooms.get(roomId).forEach((memberId) => {
+      if (memberId !== room.owner.id) {
+        members.push(users.get(memberId));
+      }
+    });
+    socket.emit('roomJoined', members, room);
   });
 
   socket.on('newMessageTo', (roomId, message) => {
-    io.to(roomId).emit('newMessageFrom', roomId, message, users.get(socket.id));
+    io.to(roomId).emit('newMessageFrom', roomId, message);
   });
 }
 
