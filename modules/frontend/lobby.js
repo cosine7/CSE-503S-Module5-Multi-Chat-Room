@@ -126,6 +126,8 @@ export default function loadLobby(user, rooms, socket) {
       if (message.sender.id === user.id) {
         title.className = 'title-right';
         title.textContent = `From you to ${message.receiver.nickname}`;
+      } else if (message.receiver.nickname === 'everyone') {
+        title.textContent = `From ${message.sender.nickname} to everyone`;
       } else {
         title.textContent = `From ${message.sender.nickname} to you`;
       }
@@ -238,6 +240,7 @@ export default function loadLobby(user, rooms, socket) {
     room.messages.push(message);
     if (currentActiveRoomSection && currentActiveRoomSection.roomId === roomId) {
       main.children[1].appendChild(createMemberRow(member));
+      document.getElementById('options').appendChild(createOption(member));
       showMessage(main.firstChild, message);
     }
   });
