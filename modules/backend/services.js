@@ -45,8 +45,14 @@ export default function startService(socket, io) {
     socket.emit('roomJoined', members, room);
   });
 
-  socket.on('newMessageTo', (roomId, message) => {
-    io.to(roomId).emit('newMessageFrom', roomId, message);
+  socket.on('newMessageTo', (roomId, receiver, message) => {
+    if (receiver.startsWith('room')) {
+      message.receiver = { nickname: 'everyone' };
+    } else {
+      message.receiver = users.get(receiver);
+      socket.emit('newMessageFrom', roomId, message);
+    }
+    io.to(receiver).emit('newMessageFrom', roomId, message);
   });
 }
 

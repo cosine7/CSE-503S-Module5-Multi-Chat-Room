@@ -184,7 +184,6 @@ main .btn-join:hover {
 }
 
 .option {
-    content: "\e605";
     position: absolute;
     right: -5px;
     color: gray;
@@ -240,6 +239,18 @@ main .input-box {
 
 .message-wrapper {
     margin: 10px 0;
+}
+
+.message-wrapper > p {
+    color: gray;
+    margin-bottom: 5px;
+}
+
+.title-right {
+    text-align: right;
+}
+
+.message-wrapper > div {
     display: flex;
 }
 
@@ -247,14 +258,14 @@ main .input-box {
     flex-direction: row-reverse;
 }
 
-.message-wrapper div{
+.message-wrapper > div > div {
     width: 30px;
     height: 30px;
     border-radius: 50%;
     border: 1px solid gray;
 }
 
-.message-wrapper p {
+.message-wrapper > div > p {
     max-width: 200px;
     border-radius: 15px;
     padding: 10px;

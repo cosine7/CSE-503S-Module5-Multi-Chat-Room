@@ -118,11 +118,29 @@ export default function loadLobby(user, rooms, socket) {
       avatar.style.backgroundColor = message.sender.color;
       const text = document.createElement('p');
       text.textContent = message.data;
+      const content = document.createElement('div');
+      content.className = `message-${message.sender.id === user.id ? 'right' : 'left'}`;
+      content.append(avatar, text);
+      const title = document.createElement('p');
+      title.textContent = `From ${message.sender.nickname} to ${message.receiver}`;
+      if (message.sender.id === user.id) {
+        title.className = 'title-right';
+        title.textContent = `From you to ${message.receiver.nickname}`;
+      } else {
+        title.textContent = `From ${message.sender.nickname} to you`;
+      }
       item = document.createElement('div');
-      item.className = `message-wrapper message-${message.sender.id === user.id ? 'right' : 'left'}`;
-      item.append(avatar, text);
+      item.className = 'message-wrapper';
+      item.append(title, content);
     }
     chatBox.appendChild(item);
+  }
+
+  function createOption(member) {
+    const option = document.createElement('option');
+    option.textContent = member.nickname;
+    option.value = member.id;
+    return option;
   }
 
   function createChatBox(roomId) {
@@ -139,12 +157,28 @@ export default function loadLobby(user, rooms, socket) {
     const memberList = document.createElement('ul');
     memberList.className = 'member-list';
     memberList.append(ownerText, createMemberRow(room.owner), memberText);
+    const select = document.createElement('select');
+    select.id = 'options';
+    const everyoneOption = document.createElement('option');
+    everyoneOption.textContent = 'Everyone';
+    everyoneOption.value = roomId;
+    everyoneOption.selected = true;
+    select.appendChild(everyoneOption);
+    if (room.owner.id !== user.id) {
+      select.appendChild(createOption(room.owner));
+    }
     room.members.forEach((member) => {
       memberList.appendChild(createMemberRow(member));
+      if (member.id !== user.id) {
+        select.appendChild(createOption(member));
+      }
     });
     const toolbar = document.createElement('div');
     toolbar.className = 'tool-bar';
-    toolbar.append('this is a tool bar');
+    const label = document.createElement('label');
+    label.textContent = 'Send Message To: ';
+    label.for = 'options';
+    toolbar.append(label, select);
     const textarea = document.createElement('textarea');
     textarea.required = true;
     const button = document.createElement('button');
@@ -154,7 +188,7 @@ export default function loadLobby(user, rooms, socket) {
     inputBox.append(toolbar, textarea, button);
     inputBox.addEventListener('submit', (event) => {
       event.preventDefault();
-      socket.emit('newMessageTo', roomId, {
+      socket.emit('newMessageTo', roomId, select.value, {
         sender: user,
         type: 'text',
         data: textarea.value,
