@@ -99,7 +99,6 @@ export default function startService(socket, io) {
     if (user && user.rooms) {
       user.rooms = user.rooms.filter((id) => id !== roomId);
     }
-    users.get(memberSocket.id).rooms.filter((id) => id !== roomId);
     const room = rooms.get(roomId);
     if (room && block) {
       room.block.push(member.id);
