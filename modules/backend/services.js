@@ -40,6 +40,10 @@ export default function startService(socket, io) {
   socket.on('roomClicked', (roomId) => {
     const sockets = io.of('/').adapter.rooms.get(roomId);
     const room = rooms.get(roomId);
+    if (!room) {
+      socket.emit('error', 'this room has been dismissed');
+      return;
+    }
     let status;
     if (sockets && sockets.has(socket.id)) {
       status = 'isInRoom';
@@ -97,7 +101,7 @@ export default function startService(socket, io) {
     }
     users.get(memberSocket.id).rooms.filter((id) => id !== roomId);
     const room = rooms.get(roomId);
-    if (block) {
+    if (room && block) {
       room.block.push(member.id);
     }
     io.to(roomId).emit('newMessageFrom', roomId, {
