@@ -4,18 +4,13 @@ import loadLobby from './lobby.js';
 const socket = io();
 const form = document.getElementById('nickname-wrapper');
 const nickname = document.getElementById('nickname');
-let isEmitting = false;
+
+socket.on('userAdded', (user, rooms) => {
+  form.remove();
+  loadLobby(user, rooms, socket);
+});
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
-  if (isEmitting) {
-    return;
-  }
-  isEmitting = true;
   socket.emit('newUser', nickname.value);
-
-  socket.on('userAdded', (user, rooms) => {
-    form.remove();
-    loadLobby(user, rooms, socket);
-  });
 });
