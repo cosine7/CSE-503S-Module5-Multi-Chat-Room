@@ -1,5 +1,8 @@
+import Filter from 'bad-words';
+
 const users = new Map();
 const rooms = new Map();
+const filter = new Filter();
 
 function getRandomColor() {
   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
@@ -70,6 +73,9 @@ export default function startService(socket, io) {
   socket.on('newMessageTo', (roomId, receiver, message) => {
     if (message.type === 'image') {
       message.data = Buffer.from(message.data).toString('base64');
+    }
+    if (message.type === 'text') {
+      message.data = filter.clean(message.data);
     }
     if (receiver.startsWith('room')) {
       message.receiver = { nickname: 'everyone' };

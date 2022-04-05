@@ -303,7 +303,7 @@ export default function loadLobby(user, rooms, socket) {
         return;
       }
       const reader = new FileReader();
-      reader.onloadend = (event) => {
+      reader.onload = (event) => {
         socket.emit('newMessageTo', roomId, select.value, {
           sender: user,
           type: 'image',
