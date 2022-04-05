@@ -14,6 +14,7 @@ export default function startService(socket, io) {
       id: socket.id,
       nickname,
       color: getRandomColor(),
+      rooms: [],
     };
     users.set(user.id, user);
     socket.emit('userAdded', user, Array.from(rooms.values()));
@@ -32,6 +33,7 @@ export default function startService(socket, io) {
       room.password = password;
     }
     await socket.join(room.id);
+    users.get(owner.id).rooms.push(room.id);
     rooms.set(room.id, room);
     io.emit('newRoom', room);
   });
@@ -61,6 +63,7 @@ export default function startService(socket, io) {
       }
     }
     await socket.join(roomId);
+    users.get(socket.id).rooms.push(room.id);
     const members = [];
     io.of('/').adapter.rooms.get(roomId).forEach((memberId) => {
       if (memberId !== room.owner.id) {
@@ -113,6 +116,21 @@ export default function startService(socket, io) {
     });
     io.to(roomId).emit('removeMember', roomId, member);
     socket.emit('didLeaveRoom', roomId);
+  });
+
+  socket.on('disconnect', () => {
+    const user = users.get(socket.id);
+    if (!user || !user.rooms) {
+      return;
+    }
+    user.rooms.forEach((roomId) => {
+      io.to(roomId).emit('newMessageFrom', roomId, {
+        type: 'announcement',
+        data: `${user.nickname} has left room`,
+      });
+      io.to(roomId).emit('removeMember', roomId, user);
+    });
+    users.delete(socket.id);
   });
 }
 
