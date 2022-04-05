@@ -6,6 +6,19 @@ Student ID: 499688
 
 GitHub Username: cosine7
 
+# How to launch the server?
+
+go to the project directory, then run the following command:
+
+```console
+$ npm install
+$ node server.js
+```
+
+# How to open the web page in browser?
+
+After the server is launched, enter `localhost:8080` in the browser url address input line
+
 # Tip
 
 Users could have the same nickname, but each user would have a unique id; same as the room
