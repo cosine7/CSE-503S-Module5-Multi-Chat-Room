@@ -106,13 +106,22 @@ export default function loadLobby(user, rooms, socket) {
       button.addEventListener('click', () => socket.emit('joinRoom', room.id));
       main.appendChild(button);
     } else if (status === 'blocked') {
-
+      main.innerHTML = '';
+      main.className = 'flex-center';
+      main.append('You are blocked by this room\'s owner');
     } else {
       const input = document.createElement('input');
       input.placeholder = 'Password';
       input.type = 'password';
+      input.required = true;
       const button = createJoinRoomButton(room);
-      main.append(input, button);
+      const form = document.createElement('form');
+      form.append(input, button);
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        socket.emit('joinRoom', room.id, input.value);
+      });
+      main.append(form);
     }
   });
 
@@ -182,7 +191,10 @@ export default function loadLobby(user, rooms, socket) {
     });
     block.addEventListener('click', () => {
       toggleMenu(menu);
-      socket.emit('block', roomId, member);
+      if (!window.confirm('Are you sure you want to block this member?')) {
+        return;
+      }
+      socket.emit('kickOut', roomId, member, true);
     });
     li.append(option, menu);
     return li;
@@ -314,6 +326,8 @@ export default function loadLobby(user, rooms, socket) {
     createChatBox(room.id);
   });
 
+  socket.on('error', (error) => window.alert(error));
+
   socket.on('newMember', (roomId, member) => {
     if (member.id === user.id) {
       return;
@@ -353,9 +367,8 @@ export default function loadLobby(user, rooms, socket) {
     }
   });
 
-  socket.on('beenKickedOutFrom', (roomId) => {
-    const room = joinedRooms.get(roomId);
-    window.alert(`You have been kicked out from room ${room.name}`);
+  socket.on('beenKickedOutFrom', (roomId, message) => {
+    window.alert(message);
     if (currentActiveRoomSection && currentActiveRoomSection.roomId === roomId) {
       main.innerHTML = '';
       currentActiveRoomSection.classList.toggle('room-active');

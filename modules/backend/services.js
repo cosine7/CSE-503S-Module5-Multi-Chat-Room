@@ -49,10 +49,16 @@ export default function startService(socket, io) {
     socket.emit('roomClickStatusChecked', status, room);
   });
 
-  socket.on('joinRoom', async (roomId) => {
+  socket.on('joinRoom', async (roomId, password) => {
+    const room = rooms.get(roomId);
+    if (room.password) {
+      if (!password || room.password !== password) {
+        socket.emit('error', 'Incorrect Password');
+        return;
+      }
+    }
     await socket.join(roomId);
     const members = [];
-    const room = rooms.get(roomId);
     io.of('/').adapter.rooms.get(roomId).forEach((memberId) => {
       if (memberId !== room.owner.id) {
         members.push(users.get(memberId));
@@ -71,15 +77,23 @@ export default function startService(socket, io) {
     io.to(receiver).emit('newMessageFrom', roomId, message);
   });
 
-  socket.on('kickOut', async (roomId, member) => {
+  socket.on('kickOut', async (roomId, member, block) => {
     const memberSocket = (await io.in(member.id).fetchSockets())[0];
     await memberSocket.leave(roomId);
+    const room = rooms.get(roomId);
+    if (block) {
+      room.block.push(member.id);
+    }
     io.to(roomId).emit('newMessageFrom', roomId, {
       type: 'announcement',
-      data: `${member.nickname} has been kicked out by room owner`,
+      data: `${member.nickname} has been ${block ? 'blocked' : 'kicked out'} by room owner`,
     });
     io.to(roomId).emit('removeMember', roomId, member);
-    io.to(member.id).emit('beenKickedOutFrom', roomId);
+    io.to(member.id).emit(
+      'beenKickedOutFrom',
+      roomId,
+      `You have been ${block ? 'blocked' : 'kicked out'} by room ${room.name}'s owner ${room.owner.nickname}`,
+    );
   });
 }
 

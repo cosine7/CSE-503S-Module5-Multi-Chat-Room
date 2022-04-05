@@ -31,7 +31,6 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
 }
 
 aside button {
@@ -304,6 +303,7 @@ main .input-box {
     flex-direction: column;
     overflow: hidden;
     z-index: 999;
+    background-color: white;
 }
 
 .option-menu button {
@@ -355,4 +355,17 @@ select {
     border-bottom: 2px solid #558AE8;
     padding-bottom: 3px;
     cursor: pointer;
+}
+
+.flex-center form {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-center input {
+    margin-bottom: 20px;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid #558AE8;
 }
