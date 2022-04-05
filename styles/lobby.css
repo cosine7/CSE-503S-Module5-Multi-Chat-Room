@@ -397,6 +397,7 @@ select {
 
 .chat-box img {
     max-width: 300px;
+    margin: 0 10px;
 }
 
 .tool-bar {
