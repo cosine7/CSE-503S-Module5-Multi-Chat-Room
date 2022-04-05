@@ -357,6 +357,10 @@ select {
     cursor: pointer;
 }
 
+.tool-bar select {
+    margin-right: 30px;
+}
+
 .flex-center form {
     display: flex;
     flex-direction: column;
@@ -368,4 +372,29 @@ select {
     border: none;
     outline: none;
     border-bottom: 2px solid #558AE8;
+}
+
+#image-input {
+    cursor: pointer;
+}
+
+#image-input::file-selector-button  {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: #0A84FF;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#image-input::file-selector-button:hover {
+    color: #83C3FF;
+}
+
+.btn-send-image {
+    width: 120px !important;
+}
+
+.chat-box img {
+    max-width: 300px;
 }

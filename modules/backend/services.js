@@ -68,6 +68,9 @@ export default function startService(socket, io) {
   });
 
   socket.on('newMessageTo', (roomId, receiver, message) => {
+    if (message.type === 'image') {
+      message.data = Buffer.from(message.data).toString('base64');
+    }
     if (receiver.startsWith('room')) {
       message.receiver = { nickname: 'everyone' };
     } else {

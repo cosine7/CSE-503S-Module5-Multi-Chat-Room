@@ -9,7 +9,9 @@ app.use(express.static(resolve(resolve(), 'public')));
 app.use(express.static(resolve(resolve(), 'styles')));
 app.use(express.static(resolve(resolve(), 'modules/frontend')));
 const httpServer = createServer(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  maxHttpBufferSize: 1e9,
+});
 
 startGlobalService(io);
 io.on('connection', (socket) => startService(socket, io));

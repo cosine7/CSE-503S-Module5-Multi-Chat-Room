@@ -206,27 +206,34 @@ export default function loadLobby(user, rooms, socket) {
       item = document.createElement('p');
       item.className = 'announcement';
       item.textContent = message.data;
-    } else if (message.type === 'text') {
-      const avatar = document.createElement('div');
-      avatar.style.backgroundColor = message.sender.color;
+      return;
+    }
+    const avatar = document.createElement('div');
+    avatar.style.backgroundColor = message.sender.color;
+    const content = document.createElement('div');
+    content.className = `message-${message.sender.id === user.id ? 'right' : 'left'}`;
+    content.appendChild(avatar);
+    const title = document.createElement('p');
+    title.textContent = `From ${message.sender.nickname} to ${message.receiver}`;
+    if (message.sender.id === user.id) {
+      title.className = 'title-right';
+      title.textContent = `From you to ${message.receiver.nickname}`;
+    } else if (message.receiver.nickname === 'everyone') {
+      title.textContent = `From ${message.sender.nickname} to everyone`;
+    } else {
+      title.textContent = `From ${message.sender.nickname} to you`;
+    }
+    item = document.createElement('div');
+    item.className = 'message-wrapper';
+    item.append(title, content);
+    if (message.type === 'text') {
       const text = document.createElement('p');
       text.textContent = message.data;
-      const content = document.createElement('div');
-      content.className = `message-${message.sender.id === user.id ? 'right' : 'left'}`;
-      content.append(avatar, text);
-      const title = document.createElement('p');
-      title.textContent = `From ${message.sender.nickname} to ${message.receiver}`;
-      if (message.sender.id === user.id) {
-        title.className = 'title-right';
-        title.textContent = `From you to ${message.receiver.nickname}`;
-      } else if (message.receiver.nickname === 'everyone') {
-        title.textContent = `From ${message.sender.nickname} to everyone`;
-      } else {
-        title.textContent = `From ${message.sender.nickname} to you`;
-      }
-      item = document.createElement('div');
-      item.className = 'message-wrapper';
-      item.append(title, content);
+      content.appendChild(text);
+    } else if (message.type === 'image') {
+      const image = new Image();
+      image.src = `data:image/*;base64,${message.data}`;
+      content.appendChild(image);
     }
     chatBox.appendChild(item);
   }
@@ -280,7 +287,33 @@ export default function loadLobby(user, rooms, socket) {
     const label = document.createElement('label');
     label.textContent = 'Send Message To: ';
     label.htmlFor = 'options';
-    toolbar.append(label, select);
+    const imageLabel = document.createElement('label');
+    imageLabel.textContent = 'Image: ';
+    imageLabel.htmlFor = 'image-input';
+    const imageInput = document.createElement('input');
+    imageInput.type = 'file';
+    imageInput.accept = 'image/*';
+    imageInput.id = 'image-input';
+    const sendImageButton = document.createElement('button');
+    sendImageButton.textContent = 'Send Image';
+    sendImageButton.type = 'button';
+    sendImageButton.className = 'btn-send-image';
+    sendImageButton.addEventListener('click', () => {
+      if (imageInput.files.length === 0) {
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = (event) => {
+        socket.emit('newMessageTo', roomId, select.value, {
+          sender: user,
+          type: 'image',
+          data: event.target.result,
+        });
+      };
+      reader.readAsArrayBuffer(imageInput.files[0]);
+      imageInput.value = '';
+    });
+    toolbar.append(label, select, imageLabel, imageInput, sendImageButton);
     const textarea = document.createElement('textarea');
     textarea.required = true;
     const button = document.createElement('button');
