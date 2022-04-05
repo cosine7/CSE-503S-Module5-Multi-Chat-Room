@@ -18,18 +18,54 @@ export default function loadLobby(user, rooms, socket) {
     const roomInput = document.createElement('input');
     roomInput.type = 'text';
     roomInput.required = true;
+    roomInput.id = 'roomName';
     const label = document.createElement('label');
-    label.for = 'roomName';
+    label.htmlFor = 'roomName';
     label.textContent = 'Room Name';
     const submitButton = document.createElement('button');
     submitButton.textContent = 'Create Room';
+    const select = document.createElement('select');
+    select.id = 'room-options';
+    const optionLabel = document.createElement('label');
+    optionLabel.htmlFor = 'room-options';
+    optionLabel.textContent = 'Option:';
+    const publicOption = document.createElement('option');
+    publicOption.value = 'public';
+    publicOption.textContent = 'Everyone Can Join';
+    publicOption.selected = true;
+    const privateOption = document.createElement('option');
+    privateOption.value = 'private';
+    privateOption.textContent = 'Password Required';
+    select.append(publicOption, privateOption);
+    const selectWrapper = document.createElement('div');
+    selectWrapper.append(optionLabel, select);
+    selectWrapper.className = 'select-wrapper';
+    const contentWrapper = document.createElement('div');
+    contentWrapper.className = 'create-room-content-wrapper';
+    contentWrapper.append(roomInput, label, selectWrapper);
+    const password = document.createElement('input');
+    password.type = 'password';
+    password.required = true;
+    password.id = 'roomPassword';
+    const passwordLabel = document.createElement('label');
+    passwordLabel.htmlFor = 'roomPassword';
+    passwordLabel.textContent = 'Password';
+    select.addEventListener('change', () => {
+      if (select.value === 'public') {
+        password.value = '';
+        password.remove();
+        passwordLabel.remove();
+      } else {
+        contentWrapper.append(password, passwordLabel);
+      }
+    });
     const form = document.createElement('form');
-    form.className = 'form-wrapper';
-    form.append(closeBtn, roomInput, label, submitButton);
+    form.className = 'form-wrapper create-room-form';
+    form.append(closeBtn, contentWrapper, submitButton);
     form.addEventListener('click', (e) => { e.stopPropagation(); });
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      socket.emit('createRoom', user, roomInput.value);
+      socket.emit('createRoom', user, roomInput.value, password.value);
       closePopover();
     });
     popover.addEventListener('click', closePopover);
@@ -53,17 +89,30 @@ export default function loadLobby(user, rooms, socket) {
     createChatBox(room.id);
   });
 
-  socket.on('isInRoom', (isInRoom, room) => {
-    if (isInRoom) {
+  function createJoinRoomButton(room) {
+    main.innerHTML = '';
+    main.className = 'flex-center';
+    const button = document.createElement('button');
+    button.className = 'btn-join';
+    button.textContent = `Join Room ${room.name}`;
+    return button;
+  }
+
+  socket.on('roomClickStatusChecked', (status, room) => {
+    if (status === 'isInRoom') {
       createChatBox(room.id);
-    } else {
-      const button = document.createElement('button');
-      button.className = 'btn-join';
-      button.textContent = `Join Room ${room.name}`;
+    } else if (status === 'joinRequired') {
+      const button = createJoinRoomButton(room);
       button.addEventListener('click', () => socket.emit('joinRoom', room.id));
-      main.innerHTML = '';
-      main.className = 'flex-center';
       main.appendChild(button);
+    } else if (status === 'blocked') {
+
+    } else {
+      const input = document.createElement('input');
+      input.placeholder = 'Password';
+      input.type = 'password';
+      const button = createJoinRoomButton(room);
+      main.append(input, button);
     }
   });
 
@@ -218,7 +267,7 @@ export default function loadLobby(user, rooms, socket) {
     toolbar.className = 'tool-bar';
     const label = document.createElement('label');
     label.textContent = 'Send Message To: ';
-    label.for = 'options';
+    label.htmlFor = 'options';
     toolbar.append(label, select);
     const textarea = document.createElement('textarea');
     textarea.required = true;

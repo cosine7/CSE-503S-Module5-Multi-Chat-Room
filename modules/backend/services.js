@@ -16,21 +16,37 @@ export default function startService(socket, io) {
     socket.emit('userAdded', user, Array.from(rooms.values()));
   });
 
-  socket.on('createRoom', (owner, roomName) => {
+  socket.on('createRoom', async (owner, roomName, password) => {
     const room = {
       id: `room${Date.now().toString()}`,
       name: roomName,
       owner,
       color: getRandomColor(),
+      block: [],
     };
-    socket.join(room.id);
+    if (password) {
+      room.isPrivate = true;
+      room.password = password;
+    }
+    await socket.join(room.id);
     rooms.set(room.id, room);
     io.emit('newRoom', room);
   });
 
   socket.on('roomClicked', (roomId) => {
     const sockets = io.of('/').adapter.rooms.get(roomId);
-    socket.emit('isInRoom', sockets && sockets.has(socket.id), rooms.get(roomId));
+    const room = rooms.get(roomId);
+    let status;
+    if (sockets && sockets.has(socket.id)) {
+      status = 'isInRoom';
+    } else if (room.block.includes(socket.id)) {
+      status = 'blocked';
+    } else if (room.password) {
+      status = 'passwordRequired';
+    } else {
+      status = 'joinRequired';
+    }
+    socket.emit('roomClickStatusChecked', status, room);
   });
 
   socket.on('joinRoom', async (roomId) => {

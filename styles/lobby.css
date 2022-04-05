@@ -31,6 +31,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 aside button {
@@ -322,4 +323,36 @@ main .input-box {
 .option-menu button:hover {
     background-color: #0A84FF;
     color: white;
+}
+
+.room-options {
+    flex: none;
+}
+
+.create-room-form {
+    height: 270px;
+    justify-content: space-between;
+    padding-top: 40px;
+}
+
+.create-room-form .select-wrapper {
+    margin-bottom: 30px;
+    margin-top: 10px;
+}
+
+.create-room-form select {
+    margin-left: 20px;
+}
+
+.create-room-content-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+select {
+    border: none;
+    outline: none;
+    border-bottom: 2px solid #558AE8;
+    padding-bottom: 3px;
+    cursor: pointer;
 }
