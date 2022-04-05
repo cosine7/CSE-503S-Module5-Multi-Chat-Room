@@ -398,3 +398,20 @@ select {
 .chat-box img {
     max-width: 300px;
 }
+
+.tool-bar {
+    position: relative;
+}
+
+.tool-bar .btn-leave-room {
+    background-color: transparent;
+    color: red;
+    width: 120px;
+    position: absolute;
+    right: 0;
+}
+
+.tool-bar .btn-leave-room:hover {
+    box-shadow: none;
+    color: rgba(255, 0, 0, 0.55);
+}

@@ -104,6 +104,16 @@ export default function startService(socket, io) {
       `You have been ${block ? 'blocked' : 'kicked out'} by room ${room.name}'s owner ${room.owner.nickname}`,
     );
   });
+
+  socket.on('leaveRoom', async (roomId, member) => {
+    await socket.leave(roomId);
+    io.to(roomId).emit('newMessageFrom', roomId, {
+      type: 'announcement',
+      data: `${member.nickname} has left room`,
+    });
+    io.to(roomId).emit('removeMember', roomId, member);
+    socket.emit('didLeaveRoom', roomId);
+  });
 }
 
 export function startGlobalService(io) {

@@ -206,6 +206,7 @@ export default function loadLobby(user, rooms, socket) {
       item = document.createElement('p');
       item.className = 'announcement';
       item.textContent = message.data;
+      chatBox.appendChild(item);
       return;
     }
     const avatar = document.createElement('div');
@@ -313,7 +314,14 @@ export default function loadLobby(user, rooms, socket) {
       reader.readAsArrayBuffer(imageInput.files[0]);
       imageInput.value = '';
     });
-    toolbar.append(label, select, imageLabel, imageInput, sendImageButton);
+    const leaveRoomButton = document.createElement('button');
+    leaveRoomButton.textContent = 'Leave Room';
+    leaveRoomButton.className = 'btn-leave-room';
+    leaveRoomButton.type = 'button';
+    leaveRoomButton.addEventListener('click', () => {
+      socket.emit('leaveRoom', roomId, user);
+    });
+    toolbar.append(label, select, imageLabel, imageInput, sendImageButton, leaveRoomButton);
     const textarea = document.createElement('textarea');
     textarea.required = true;
     const button = document.createElement('button');
@@ -400,14 +408,20 @@ export default function loadLobby(user, rooms, socket) {
     }
   });
 
-  socket.on('beenKickedOutFrom', (roomId, message) => {
-    window.alert(message);
+  function leaveRoom(roomId) {
     if (currentActiveRoomSection && currentActiveRoomSection.roomId === roomId) {
       main.innerHTML = '';
       currentActiveRoomSection.classList.toggle('room-active');
       currentActiveRoomSection = null;
     }
     joinedRooms.delete(roomId);
+  }
+
+  socket.on('didLeaveRoom', leaveRoom);
+
+  socket.on('beenKickedOutFrom', (roomId, message) => {
+    window.alert(message);
+    leaveRoom(roomId);
   });
 
   (async () => {
