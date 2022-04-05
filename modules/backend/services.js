@@ -91,6 +91,11 @@ export default function startService(socket, io) {
   socket.on('kickOut', async (roomId, member, block) => {
     const memberSocket = (await io.in(member.id).fetchSockets())[0];
     await memberSocket.leave(roomId);
+    const user = users.get(memberSocket.id);
+    if (user && user.rooms) {
+      user.rooms = user.rooms.filter((id) => id !== roomId);
+    }
+    users.get(memberSocket.id).rooms.filter((id) => id !== roomId);
     const room = rooms.get(roomId);
     if (block) {
       room.block.push(member.id);
@@ -109,6 +114,10 @@ export default function startService(socket, io) {
 
   socket.on('leaveRoom', async (roomId, member) => {
     await socket.leave(roomId);
+    const user = users.get(member.id);
+    if (user && user.rooms) {
+      user.rooms = user.rooms.filter((id) => id !== roomId);
+    }
     io.to(roomId).emit('newMessageFrom', roomId, {
       type: 'announcement',
       data: `${member.nickname} has left room`,
