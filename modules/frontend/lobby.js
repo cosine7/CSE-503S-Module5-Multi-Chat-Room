@@ -439,8 +439,4 @@ export default function loadLobby(user, rooms, socket) {
     document.body.className = 'container';
     document.body.append(sidebar, nav, main);
   })();
-
-  window.addEventListener('beforeunload', () => {
-    // socket.emit('closeApp', Array.from(joinedRooms.keys()));
-  });
 }
