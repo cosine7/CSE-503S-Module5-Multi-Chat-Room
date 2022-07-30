@@ -1,10 +1,6 @@
-# CSE330
+# Module Requirement
 
-Name: ChenXiao Liu
-
-Student ID: 499688
-
-GitHub Username: cosine7
+[Detail](https://classes.engineering.wustl.edu/cse330/index.php?title=Module_6)
 
 # How to launch the server?
 
